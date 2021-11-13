@@ -46,21 +46,22 @@ m = 0;
     DV_2 = norm(p2_vel(end,:) - v2)
     
     
-%     figure(1)
-%     X = [p1_pos(:,1) p2_pos(:,1) pos_xfer(:,1)];
-%     Y = [p1_pos(:,2) p2_pos(:,2) pos_xfer(:,2)];
-%     Z = [p1_pos(:,3) p2_pos(:,3) pos_xfer(:,3)];
-%     plot3(X,Y,Z,'.')
-%     hold on
-%     plot3(0,0,0,'x')
-%     plot3(X(1,:),Y(1,:),Z(1,:),'o')
-%     xlim(1e8*[-4 4])
-%     ylim(1e8*[-4 4])
-%     zlim(1e8*[-4 4])
-%     xlabel('x')
-%     ylabel('y')
-%     zlabel('z')
-%     grid
+    figure(1)
+    X = [p1_pos(:,1) p2_pos(:,1) x_pos(:,1)];
+    Y = [p1_pos(:,2) p2_pos(:,2) x_pos(:,2)];
+    Z = [p1_pos(:,3) p2_pos(:,3) x_pos(:,3)];
+    plot3(X,Y,Z,'.')
+    hold on
+    plot3(0,0,0,'x')
+    plot3(X(1,1),Y(1,1),Z(1,1),'ko')
+    plot3(X(1,1),Y(1,1),Z(1,1),'ko')
+    xlim(1e8*[-4 4])
+    ylim(1e8*[-4 4])
+    zlim(1e8*[-4 4])
+    xlabel('x')
+    ylabel('y')
+    zlabel('z')
+    grid
     
     figure(2)
     plot(p1_pos(:,1),p1_pos(:,2))

@@ -1,10 +1,10 @@
 clc; clear; close all;
 
 % 2020 window
-departure_1 = '1-Jan-2020';
-departure_2 = '1-Jan-2021';
-arrival_1 = '1-Sep-2020';
-arrival_2 = '1-Jan-2022';
+departure_1 = '1-Jan-2011';
+departure_2 = '1-Jan-2030';
+arrival_1 = '1-Mar-2011';
+arrival_2 = '1-Mar-2030';
 
 % departure_1 = '1-Jan-2020';
 % departure_2 = '1-Jul-2020';
@@ -36,8 +36,8 @@ jd_departure_m2020 = juliandate(departure_m2020,'dd-mm-yyyy');
 jd_arrival_m2020 = juliandate(arrival_m2020,'dd-mm-yyyy');
 
 %%
-N_departure_dates = 25;
-N_arrival_dates = 25;
+N_departure_dates = 500;
+N_arrival_dates = 500;
 departure_dates = linspace(jd_departure_1,jd_departure_2,N_departure_dates);
 arrival_dates = linspace(jd_arrival_1,jd_arrival_2,N_arrival_dates);
 
@@ -82,20 +82,33 @@ end
 
 disp('CALCULATION COMPLETE');
 
+
+%% REMOVE NEGATIVE TIME TRANSFERS
+for j = 1:N_departure_dates
+    for i = 1:N_arrival_dates
+        
+        if departure_dates(j) > arrival_dates(i)
+            DV_depart(i,j,:) = 10000 * ones(1,1,2);
+            DV_arrive(i,j,:) = 10000 * ones(1,1,2);
+        end
+    end
+end
+
+
 %% PLOTTING
 plotdefaults(16,14,2);
 
 X = datenum(datetime(departure_dates,'convertfrom','juliandate'));
 Y = datenum(datetime(arrival_dates,'convertfrom','juliandate'));
 Z = min(DV_depart + DV_arrive,[],3);
-V = linspace(0,9,100);
+V = linspace(0,15,100);
 
 % plot total Delta-V porkchop plot
 figure(1)
 contour(X,Y,Z,V);
 hold on
-plot(datenum(datetime(jd_departure_m2020,'convertfrom','juliandate')),...
-    datenum(datetime(jd_arrival_m2020,'convertfrom','juliandate')),'k+')
+% plot(datenum(datetime(jd_departure_m2020,'convertfrom','juliandate')),...
+%     datenum(datetime(jd_arrival_m2020,'convertfrom','juliandate')),'k+')
 colormap(jet);
 hold off
 
@@ -114,23 +127,44 @@ datetick('y',2,'keeplimits','keepticks')
 % labels
 xlabel('Departure Date')
 ylabel('Arrival Date')
-legend('Total $\Delta V$ Contour','NASA Mars 2020 Mission','location','northwest')
+% legend('Total $\Delta V$ Contour','NASA Mars 2020 Mission','location','northwest')
 title('Earth to Mars 2020 Launch Window')
 
 % save figure
 % saveas(gca,'porkchop_plot.pdf')
-exportgraphics(gca,'porkchop.pdf','contenttype','vector')
-
+% exportgraphics(gcf,'porkchop.jpg','resolution','500')
 
 %% plot separate contour plots
 Z1 = min(DV_depart,[],3);
 Z2 = min(DV_arrive,[],3);
-V1 = linspace(0,10,10);
-V2 = linspace(0,10,10);
+V1 = linspace(0,10,8);
+V2 = linspace(0,10,8);
 V3 = linspace(min(DT,[],'all'),max(DT,[],'all'),10);
+plotdefaults(16,14,3);
+
 
 figure(2)
-contour(X,Y,Z1,V1,'color',default_color(1))
+[C1,h1] = contour(X,Y,Z1,V1,'r');
 hold on
-contour(X,Y,Z2,V2,'color',default_color(2))
-contour(X,Y,DT,V3,'k')
+[C2,h2] = contour(X,Y,Z2,V2,'b');
+% [C3,h3] = contour(X,Y,DT,V3,'k');
+hold off
+
+clabel(C1,h1,'interpreter','latex','fontsize',8)
+clabel(C2,h2,'interpreter','latex','fontsize',8)
+% clabel(C3,h3,'interpreter','latex','fontsize',14)
+
+
+% date ticks
+set(gca,'ytick',linspace(min(Y),max(Y),7))
+set(gca,'xtick',linspace(min(X),max(X),5))
+datetick('x',2,'keeplimits','keepticks')
+datetick('y',2,'keeplimits','keepticks')
+
+% labels
+xlabel('Departure Date')
+ylabel('Arrival Date')
+legend('Departure $\Delta V$ [km/s]','Arrival $\Delta V$ [km/s]','location','northwest')
+title('Earth to Mars 2020 Launch Window')
+
+% exportgraphics(gca,'porkchop_separate.jpg','resolution','500')
