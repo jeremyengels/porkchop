@@ -39,6 +39,76 @@ function [pos,vel] = OrbitPropogator(time_JD,planet)
             L = 355.45332 * DEG2RAD;             % mean longitude at J2000
             T = 2*pi*sqrt(a^3 / mu);
 
+        case 'Venus' % https://nssdc.gsfc.nasa.gov/planetary/factsheet/
+            
+            a = 0.72333199 * AU2KM;
+            e = 0.00677323;                     % eccentricity
+            i = 3.39471 * DEG2RAD;               % inclination
+            Omega = 76.68069 * DEG2RAD;          % RAAN
+            omega = 131.53298 * DEG2RAD;         % argument of the perigee
+            L = 181.97973 * DEG2RAD;             % mean longitude at J2000
+            T = 2*pi*sqrt(a^3 / mu);
+
+        case 'Mercury' % https://nssdc.gsfc.nasa.gov/planetary/factsheet/
+            
+            a = 0.38709893 * AU2KM;
+            e = 0.20563069;                     % eccentricity
+            i = 7.00487 * DEG2RAD;               % inclination
+            Omega = 48.33167 * DEG2RAD;          % RAAN
+            omega = 77.45645 * DEG2RAD;          % argument of the perigee
+            L = 252.25084 * DEG2RAD;             % mean longitude at J2000
+            T = 2*pi*sqrt(a^3 / mu);
+
+        case 'Jupiter' % https://nssdc.gsfc.nasa.gov/planetary/factsheet/
+            
+            a = 5.20336301 * AU2KM;
+            e = 0.04839266;                     % eccentricity
+            i = 1.30530 * DEG2RAD;               % inclination
+            Omega = 100.55615 * DEG2RAD;         % RAAN
+            omega = 14.75385 * DEG2RAD;          % argument of the perigee
+            L = 34.40438 * DEG2RAD;              % mean longitude at J2000
+            T = 2*pi*sqrt(a^3 / mu);
+
+        case 'Saturn' % https://nssdc.gsfc.nasa.gov/planetary/factsheet/
+            
+            a = 9.53707032 * AU2KM;
+            e = 0.05415060;                     % eccentricity
+            i = 2.48446 * DEG2RAD;               % inclination
+            Omega = 113.71504 * DEG2RAD;         % RAAN
+            omega = 92.43194 * DEG2RAD;          % argument of the perigee
+            L = 49.94432 * DEG2RAD;              % mean longitude at J2000
+            T = 2*pi*sqrt(a^3 / mu);
+
+        case 'Uranus' % https://nssdc.gsfc.nasa.gov/planetary/factsheet/
+            
+            a = 19.19126393 * AU2KM;
+            e = 0.04716771;                     % eccentricity
+            i = 0.76986 * DEG2RAD;               % inclination
+            Omega = 74.22988 * DEG2RAD;          % RAAN
+            omega = 170.96424 * DEG2RAD;         % argument of the perigee
+            L = 313.23218 * DEG2RAD;             % mean longitude at J2000
+            T = 2*pi*sqrt(a^3 / mu);
+
+        case 'Neptune' % https://nssdc.gsfc.nasa.gov/planetary/factsheet/
+            
+            a = 30.06896348 * AU2KM;
+            e = 0.00858587;                     % eccentricity
+            i = 1.76917 * DEG2RAD;               % inclination
+            Omega = 131.72169 * DEG2RAD;         % RAAN
+            omega = 44.97135 * DEG2RAD;          % argument of the perigee
+            L = 304.88003 * DEG2RAD;             % mean longitude at J2000
+            T = 2*pi*sqrt(a^3 / mu);
+
+        case 'Pluto' % that'll show 'em
+            
+            a = 39.48168677 * AU2KM;
+            e = 0.24880766;                     % eccentricity
+            i = 17.14175 * DEG2RAD;              % inclination
+            Omega = 110.30347 * DEG2RAD;         % RAAN
+            omega = 224.06676 * DEG2RAD;         % argument of the perigee
+            L = 238.92881 * DEG2RAD;             % mean longitude at J2000
+            T = 2*pi*sqrt(a^3 / mu);
+
     end
     
     % mean anomaly at J2000
@@ -62,9 +132,23 @@ function [pos,vel] = OrbitPropogator(time_JD,planet)
     v_PF = mu/h * [-sin(theta); e + cos(theta); zeros(size(theta))];
     
     % transform perifocal to heliocentric equatorial system
-    R1 = EulerRotation('z',-omega);
-    R2 = EulerRotation('x',-i);
-    R3 = EulerRotation('z',-Omega);
+    %R1 = rotz(-omega);
+    %R1 = EulerRotation('z',-omega);
+    %R2 = EulerRotation('x',-i);
+    %R3 = EulerRotation('z',-Omega);
+
+    R1 = [cos(-omega), -sin(-omega), 0;
+          sin(-omega),  cos(-omega), 0;
+          0,           0,           1]; % Rotation about z-axis by -omega
+
+    R2 = [1, 0,           0;
+          0, cos(-i), -sin(-i);
+          0, sin(-i),  cos(-i)];       % Rotation about x-axis by -i
+
+    R3 = [cos(-Omega), -sin(-Omega), 0;
+          sin(-Omega),  cos(-Omega), 0;
+          0,           0,           1]; % Rotation about z-axis by -Omega
+
     
     r_HEC = R3*R2*R1*r_PF;
     v_HEC = R3*R2*R1*v_PF;

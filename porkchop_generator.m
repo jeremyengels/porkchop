@@ -6,6 +6,11 @@ departure_2 = '1-Jan-2030';
 arrival_1 = '1-Mar-2011';
 arrival_2 = '1-Mar-2030';
 
+departure_1 = '1-Oct-1965'; % before Venera-2
+departure_2 = '1-Aug-1967'; % after Kosmos-167
+arrival_1 = departure_1;
+arrival_2 = '1-Dec-1967'; % after arrival of Venera-4
+
 % departure_1 = '1-Jan-2020';
 % departure_2 = '1-Jul-2020';
 % arrival_1 = '1-Nov-2020';
@@ -27,13 +32,13 @@ arrival_m2020 = '18-Feb-2021';
 % departure_m2020 = '20-May-2018';
 % arrival_m2020 = '6-Dec-2018';
 
-jd_departure_1 = juliandate(departure_1,'dd-mm-yyyy');
-jd_departure_2 = juliandate(departure_2,'dd-mm-yyyy');
-jd_arrival_1 = juliandate(arrival_1,'dd-mm-yyyy');
-jd_arrival_2 = juliandate(arrival_2,'dd-mm-yyyy');
+jd_departure_1 = juliandate(departure_1,'dd-mmm-yyyy');
+jd_departure_2 = juliandate(departure_2,'dd-mmm-yyyy');
+jd_arrival_1 = juliandate(arrival_1,'dd-mmm-yyyy');
+jd_arrival_2 = juliandate(arrival_2,'dd-mmm-yyyy');
 
-jd_departure_m2020 = juliandate(departure_m2020,'dd-mm-yyyy');
-jd_arrival_m2020 = juliandate(arrival_m2020,'dd-mm-yyyy');
+jd_departure_m2020 = juliandate(departure_m2020,'dd-mmm-yyyy');
+jd_arrival_m2020 = juliandate(arrival_m2020,'dd-mmm-yyyy');
 
 %%
 N_departure_dates = 500;
@@ -51,7 +56,7 @@ DV_arrive_long = zeros(N_arrival_dates,N_departure_dates);
 planet1 = 'Earth';
 
 % arrival planet
-planet2 = 'Mars';
+planet2 = 'Venus';
 
 % initialize data matrices
 DV_depart = zeros(N_arrival_dates,N_departure_dates,2);
@@ -96,7 +101,7 @@ end
 
 
 %% PLOTTING
-plotdefaults(16,14,2);
+%plotdefaults(16,14,2); % seems to be deprecated??
 
 X = datenum(datetime(departure_dates,'convertfrom','juliandate'));
 Y = datenum(datetime(arrival_dates,'convertfrom','juliandate'));
@@ -140,7 +145,7 @@ Z2 = min(DV_arrive,[],3);
 V1 = linspace(0,10,8);
 V2 = linspace(0,10,8);
 V3 = linspace(min(DT,[],'all'),max(DT,[],'all'),10);
-plotdefaults(16,14,3);
+%plotdefaults(16,14,3);
 
 
 figure(2)
